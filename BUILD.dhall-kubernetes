@@ -1,8 +1,22 @@
 package(default_visibility=['//visibility:public'])
 
+load("@dhall//:defs.bzl", "dhall_library")
+
 filegroup(
     name = "dhall-k8s-1.17",
     srcs = glob([
         "1.17/**/*",
     ]),
 )
+
+dhall_library(
+    name = "k8s_package_library",
+    entrypoint = "package.dhall",
+    srcs = glob(["**/*.dhall"]) 
+)
+dhall_library(
+    name = "k8s_prelude_library",
+    entrypoint = "Prelude.dhall",
+    srcs = glob(["**/*.dhall"]) 
+)
+

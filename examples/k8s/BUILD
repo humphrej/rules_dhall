@@ -1,19 +1,12 @@
 package(default_visibility = ["//visibility:public"])
 
-genrule(
-    name = "special_ingress",
-    srcs = ["ingress.dhall",
-            "Prelude.dhall",
-            "package.dhall",
-        "@dhall-kubernetes//:dhall-k8s-1.17"
+load("//:defs.bzl", "dhall_output")
+
+dhall_output(
+    name = "ingress_yaml",
+    src = "ingress.dhall",
+    deps = [
+        "@dhall-kubernetes//:k8s_package_library",
+        "@dhall-kubernetes//:k8s_prelude_library",
     ],
-    outs = ["ingress.yaml"],
-    cmd = "dhall-to-yaml --file $(location ingress.dhall) > $@",
-    visibility = [
-        "//visibility:public"
-    ]
 )
-
-
-
-
