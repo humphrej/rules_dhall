@@ -8,7 +8,7 @@ The rules use the method described by [@Gabriel439](https://github.com/Gabriel43
 rules_dhall fetches binary releases of dhall from github - see section [command targets](#command-targets).
 
 ## Rule reference
-###dhall_library
+### dhall_library
 This rule takes a dhall file and makes it available to other rules.  The output of the 
 rule is a tar archive that contains 3 files:
 * the binary encoded, alpha normalized dhall expression (.cache/dhall)
@@ -25,7 +25,7 @@ verbose    | __bool; optional.__  If True, will output verbose logging to the co
 
 See example [abcd]().
 
-###dhall_output
+### dhall_output
    This rule runs a dhall output generator (currently only dhall-to-yaml).  The output of
    the rule is the YAML file.
 
