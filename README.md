@@ -23,7 +23,7 @@ srcs       | __List of labels; optional.__ List of source files that are referen
 deps       | __List of labels; optional.__ List of dhall_library targets that this rule should depend on.
 verbose    | __bool; optional.__  If True, will output verbose logging to the console.
 
-See example [abcd]().
+See example [abcd](https://github.com/humphrej/dhall-bazel/tree/master/examples/abcd).
 
 ### dhall_output
    This rule runs a dhall output generator (currently only dhall-to-yaml).  The output of
