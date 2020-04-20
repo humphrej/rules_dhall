@@ -56,5 +56,5 @@ for details.
 ## Note on hashing
 To find the hash for a given package/tar:
 ```shell script
-$ bazel //rules:dhall-hash -- <path to tarfile>
+$ bazel run //rules:dhall-hash -- <path to tarfile>
 ```
