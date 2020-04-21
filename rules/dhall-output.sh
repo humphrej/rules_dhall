@@ -49,3 +49,8 @@ dump_cache BEFORE_GEN $TMP_CACHE/dhall
 
 [ $DEBUG -eq 1 ] && echo Generating $OUTPUT_FILE
 $DHALL_TO_YAML_BIN --file $DHALL_FILE >$OUTPUT_FILE
+RES=$?
+if [ $RES -ne 0 ]; then 
+  exit $RES
+fi
+

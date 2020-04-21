@@ -58,7 +58,9 @@ dump_cache BEFORE_GEN $TMP_CACHE/dhall
 [ $DEBUG -eq 1 ] && echo Generating source.dhall
 ${DHALL_BIN} --alpha --file ${DHALL_FILE} >source.dhall
 RES=$?
-[ $RES -ne 0 ] && echo "Failed"
+if [ $RES -ne 0 ]; then 
+  exit $RES
+fi
 
 SHA_HASH=$(${DHALL_BIN} hash --file source.dhall)
 
@@ -66,6 +68,10 @@ HASH_FILE="${SHA_HASH/sha256:/1220}"
 
 [ $DEBUG -eq 1 ] && echo Hash is $HASH_FILE
 ${DHALL_BIN} encode --file source.dhall >$TMP_CACHE/dhall/$HASH_FILE
+RES=$?
+if [ $RES -ne 0 ]; then 
+  exit $RES
+fi
 
 dump_cache AFTER_GEN $TMP_CACHE/dhall
 
