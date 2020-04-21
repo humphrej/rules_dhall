@@ -25,15 +25,15 @@ verbose    | __bool; optional.__  If True, will output verbose logging to the co
 
 See example [abcd](https://github.com/humphrej/dhall-bazel/tree/master/examples/abcd).
 
-### dhall_output
-   This rule runs a dhall output generator (currently only dhall-to-yaml).  The output of
-   the rule is the YAML file.
+### dhall_yaml
+### dhall_json
+   This rule runs a dhall output generator.  The output of the rule is the YAML or JSON file.
 
 Attribute | Description |
 ----------| -----------| 
 src       | __label; required (only one file).__  Any dhall references from entrypoint _must_ include the sha256 hash.
 deps      | __List of labels; optional.__ List of dhall_library targets that this rule depends on.
-out       | __string; optional.__ Defaults to the src file prefix + ".yaml".
+out       | __string; optional.__ Defaults to the src file prefix plus an extension of ".yaml" or ".json".
 
 See example [abcd](https://github.com/humphrej/dhall-bazel/tree/master/examples/abcd)
 
@@ -43,6 +43,7 @@ To run dhall or dhall-to-yaml via bazel:
 ```shell script
 bazel run //cmds:dhall -- —help
 bazel run //cmds:dhall-to-yaml -- —help
+bazel run //cmds:dhall-to-json -- —help
 ``` 
 ## Usage with dhall-kubernetes
 

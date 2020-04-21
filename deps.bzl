@@ -32,3 +32,19 @@ def load_dhall_dependencies():
       build_file_content = "exports_files(['bin/dhall-to-yaml-ng'])"
   )
 
+  http_archive(
+      name = "dhall_to_json_bin",
+      sha256 = "7ec6b54f70f077d8876bb40633905f2a0a2c69e83a3ce0bd3d9f7577e1210489",
+      urls = ["https://github.com/dhall-lang/dhall-haskell/releases/download/1.31.1/dhall-json-1.6.3-x86_64-linux.tar.bz2"],
+      build_file_content = "exports_files(['bin/dhall-to-json'])"
+  )
+
+  http_archive(
+      name = "dhall_to_json_bin_osx",
+      sha256 = "b26e5b384502fe056cfcebed382101b30a3b2cc9438d4d967a00f9612dd4fbb0",
+      urls = ["https://github.com/dhall-lang/dhall-haskell/releases/download/1.31.1/dhall-json-1.6.3-x86_64-macos.tar.bz2"],
+      build_file_content = "exports_files(['bin/dhall-to-json'])"
+  )
+
+
+

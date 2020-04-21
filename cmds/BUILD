@@ -17,3 +17,13 @@ sh_binary(
         "@dhall_to_yaml_bin_osx//:bin/dhall-to-yaml-ng",
     ],
 )
+
+sh_binary(
+    name = "dhall-to-json",
+    srcs = ["dhall-to-json.sh"],
+    data = [
+        "@dhall_to_json_bin//:bin/dhall-to-json",
+        "@dhall_to_json_bin_osx//:bin/dhall-to-json",
+    ],
+)
+

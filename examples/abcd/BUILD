@@ -1,6 +1,6 @@
 package(default_visibility = ["//visibility:public"])
 
-load("//:defs.bzl", "dhall_library", "dhall_output")
+load("//:defs.bzl", "dhall_library", "dhall_yaml", "dhall_json")
 
 dhall_library(
     name = "a_dhall_library",
@@ -30,7 +30,7 @@ dhall_library(
 )
 
 # This one uses an implicit output filename of a.yaml
-dhall_output(
+dhall_yaml(
     name = "a_yaml",
     src = "a.dhall",
     deps = [
@@ -40,7 +40,7 @@ dhall_output(
 )
 
 # This one uses an explicit output filename of ouch.yaml
-dhall_output(
+dhall_yaml(
     name = "ouch_yaml",
     src = "a.dhall",
     out = "ouch.yaml",
@@ -49,3 +49,13 @@ dhall_output(
         ":c_dhall_library",
     ],
 )
+# This one generates json
+dhall_json(
+    name = "a_json",
+    src = "a.dhall",
+    deps = [
+        ":b_dhall_library",
+        ":c_dhall_library",
+    ],
+)
+

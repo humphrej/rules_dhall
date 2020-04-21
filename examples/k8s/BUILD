@@ -1,8 +1,8 @@
 package(default_visibility = ["//visibility:public"])
 
-load("//:defs.bzl", "dhall_output")
+load("//:defs.bzl", "dhall_yaml")
 
-dhall_output(
+dhall_yaml(
     name = "ingress_yaml",
     src = "ingress.dhall",
     deps = [
