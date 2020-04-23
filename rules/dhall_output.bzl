@@ -39,7 +39,8 @@ def _dhall_output_impl(ctx):
     tools = [ ctx.attr._dhall_command.files_to_run, ctx.attr._dhall_output.files_to_run ],
     command = " ".join(cmd),
     env = {
-        "XDG_CACHE_HOME": ".cache"
+        "XDG_CACHE_HOME": ".cache",
+        "_DHALL_ARGS": " ".join(ctx.attr.args)
     }
   )
   return [ DefaultInfo(files = depset([ output ])) ]
@@ -52,6 +53,7 @@ dhall_yaml = rule(
       "data": attr.label_list(),
       "out": attr.string(mandatory = False),
       "verbose": attr.bool( default = False ), 
+      "args": attr.string_list(mandatory = False),
       "_format": attr.string(default = "yaml"),
       "_dhall_command": attr.label(
             default = Label("//cmds:dhall-to-yaml"),
@@ -74,6 +76,7 @@ dhall_json = rule(
       "data": attr.label_list(),
       "out": attr.string(mandatory = False),
       "verbose": attr.bool( default = False ), 
+      "args": attr.string_list(mandatory = False),
       "_format": attr.string(default = "json"),
       "_dhall_command": attr.label(
             default = Label("//cmds:dhall-to-json"),
