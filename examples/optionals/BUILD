@@ -14,3 +14,9 @@ dhall_yaml(
     out = "optionals_with_args.yaml",
     args = [ "--omit-empty" ]
 )
+# This one fixes the types to get the same outcome
+dhall_yaml(
+    name = "optionals2_yaml",
+    src = "optionals2.dhall"
+)
+
