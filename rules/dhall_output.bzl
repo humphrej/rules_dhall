@@ -1,12 +1,12 @@
 
 """A rule that processes dhall files and creates an output"""
 def _dhall_output_impl(ctx):
-  input = ctx.attr.src.files.to_list()[0]
+  entrypoint = ctx.attr.entrypoint.files.to_list()[0]
 
-  outputFile = input.basename[0:-6] + "." + ctx.attr._format
+  outputFile = entrypoint.basename[0:-6] + "." + ctx.attr._format
   
   inputs = []
-  inputs.append(input)
+  inputs.append(entrypoint)
 
   if ctx.attr.out != "":
     outputFile = ctx.attr.out
@@ -25,12 +25,17 @@ def _dhall_output_impl(ctx):
     inputs.append( dep.files.to_list()[0] )
 
   for data in ctx.attr.data:
-    cmd.append( "-r " + data.files.to_list()[0].path + ":" + input.dirname)
+    cmd.append( "-r " + data.files.to_list()[0].path + ":" + entrypoint.dirname)
     inputs.append( data.files.to_list()[0] )
+
+  # add all sources to the inputs
+  for src in ctx.attr.srcs:
+    file = src.files.to_list()[0]
+    inputs.append(file)
 
   cmd.append( ctx.attr._dhall_command.files_to_run.executable.path )
   cmd.append( output.path )
-  cmd.append( input.path )
+  cmd.append( entrypoint.path )
 
   ctx.actions.run_shell(
     inputs = inputs,
@@ -48,7 +53,8 @@ def _dhall_output_impl(ctx):
 dhall_yaml = rule(
     implementation = _dhall_output_impl,
     attrs = {
-      "src": attr.label(mandatory = True, allow_single_file = True),
+      "entrypoint": attr.label(mandatory = True, allow_single_file = True),
+      "srcs": attr.label_list(allow_files = [".dhall"]),
       "deps": attr.label_list(),
       "data": attr.label_list(),
       "out": attr.string(mandatory = False),
@@ -71,7 +77,8 @@ dhall_yaml = rule(
 dhall_json = rule(
     implementation = _dhall_output_impl,
     attrs = {
-      "src": attr.label(mandatory = True, allow_single_file = True),
+      "entrypoint": attr.label(mandatory = True, allow_single_file = True),
+      "srcs": attr.label_list(allow_files = [".dhall"]),
       "deps": attr.label_list(),
       "data": attr.label_list(),
       "out": attr.string(mandatory = False),

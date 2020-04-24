@@ -18,7 +18,7 @@ rule is a tar archive that contains 3 files:
 Attribute  | Description |
 ---------- |  ---- |
 name       | __string; required.__ 
-entrypoint | __label; required.__  This is name of the dhall file that contains the expression that is the entrypoint to the package.  Any dhall references from entrypoint _must_ include the sha256 hash.
+entrypoint | __label; required.__  This is name of the dhall file that contains the expression that is the entrypoint to the package.  Any dhall references from another dhall package _must_ include the sha256 hash.
 srcs       | __List of labels; optional.__ List of source files that are referenced from *entrypoint*.
 deps       | __List of labels; optional.__ List of dhall_library targets that this rule should depend on.
 data       | __List of labels; optional.__ The output of these targets will copied into this package so that dhall can reference them.
@@ -31,7 +31,8 @@ See example [abcd](https://github.com/humphrej/dhall-bazel/tree/master/examples/
 
 Attribute | Description |
 ----------| -----------| 
-src       | __label; required (only one file).__  Any dhall references from entrypoint _must_ include the sha256 hash.
+entrypoint | __label; required.__  This is name of the dhall file that contains the expression that is the entrypoint to the package.  Any dhall references from another dhall package _must_ include the sha256 hash.
+srcs       | __List of labels; optional.__ List of source files that are referenced from *entrypoint*.
 deps      | __List of labels; optional.__ List of dhall_library targets that this rule depends on.
 data      | __List of labels; optional.__ The output of these targets will copied into this package so that dhall can reference them.
 out       | __string; optional.__ Defaults to the src file prefix plus an extension of ".yaml" or ".json".

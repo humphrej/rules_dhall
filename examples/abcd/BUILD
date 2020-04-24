@@ -32,7 +32,7 @@ dhall_library(
 # This one uses an implicit output filename of a.yaml
 dhall_yaml(
     name = "a_yaml",
-    src = "a.dhall",
+    entrypoint = "a.dhall",
     deps = [
         ":b_dhall_library",
         ":c_dhall_library",
@@ -42,7 +42,7 @@ dhall_yaml(
 # This one uses an explicit output filename of ouch.yaml
 dhall_yaml(
     name = "ouch_yaml",
-    src = "a.dhall",
+    entrypoint = "a.dhall",
     out = "ouch.yaml",
     deps = [
         ":b_dhall_library",
@@ -52,10 +52,18 @@ dhall_yaml(
 # This one generates json
 dhall_json(
     name = "a_json",
-    src = "a.dhall",
+    entrypoint = "a.dhall",
     deps = [
         ":b_dhall_library",
         ":c_dhall_library",
     ],
 )
+# This one does not use any intermediate targets
+dhall_yaml(
+    name = "a_no_intermediates_yaml",
+    entrypoint = "a.dhall",
+    out = "a_no_intermediates.yaml",
+    srcs = [ "b.dhall", "c.dhall", "d.dhall" ]
+)
+
 

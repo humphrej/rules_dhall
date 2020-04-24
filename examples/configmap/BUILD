@@ -4,7 +4,7 @@ load("//:defs.bzl", "dhall_yaml", "dhall_library")
 
 dhall_yaml(
     name = "server_yaml",
-    src = "server.dhall",
+    entrypoint = "server.dhall",
 )
 
 # This demonstrates that it is possible to reference the output of dhall_yaml
@@ -21,7 +21,7 @@ dhall_library(
 # This demonstrates that it is possible to reference the output of dhall_yaml
 dhall_yaml(
     name = "configmap_yaml",
-    src = "configmap.dhall",
+    entrypoint = "configmap.dhall",
     data = [ ":server_yaml" ],
     deps = [
         "@dhall-kubernetes//:k8s_package_library",
