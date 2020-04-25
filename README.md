@@ -54,9 +54,7 @@ bazel run //cmds:dhall-to-json -- —help
 It is possible to use these rules in combination with [dhall-kubernetes](https://github.com/dhall-lang/dhall-kubernetes). See example [k8s](https://github.com/humphrej/dhall-bazel/tree/master/examples/k8s).
 
 ## Note on freezing dependencies
-rules_dhall relies on the semantic integrity checking feature of dhall.  For this to work,
-dependencies referenced in a dhall expression must include the sha256 hash. See "dhall freeze"
-for details.
+rules_dhall relies on the semantic integrity checking feature of dhall.  For this to work, expressions referenced from another dhall package must include the sha256 hash. See "dhall freeze" for details.
 
 ## Note on hashing
 To find the hash for a given package/tar:
