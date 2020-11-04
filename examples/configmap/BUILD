@@ -1,6 +1,9 @@
 package(default_visibility = ["//visibility:public"])
 
-load("//:defs.bzl", "dhall_yaml", "dhall_library")
+load("//:defs.bzl", "dhall_yaml", "dhall_library", "k8s_dhall_library")
+
+k8s_dhall_library(name = "k8s", version = "1.17")
+
 
 dhall_yaml(
     name = "server_yaml",
@@ -13,8 +16,8 @@ dhall_library(
     entrypoint = "configmap.dhall",
     data = [ ":server_yaml" ],
     deps = [
-        "@dhall-kubernetes//:k8s_package_library",
-        "@dhall-kubernetes//:k8s_prelude_library",
+        ":k8s_package",
+        ":k8s_prelude",
     ],
 )
 
@@ -24,7 +27,7 @@ dhall_yaml(
     entrypoint = "configmap.dhall",
     data = [ ":server_yaml" ],
     deps = [
-        "@dhall-kubernetes//:k8s_package_library",
-        "@dhall-kubernetes//:k8s_prelude_library",
+        ":k8s_package",
+        ":k8s_prelude",
     ],
 )

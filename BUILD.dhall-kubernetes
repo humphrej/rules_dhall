@@ -1,22 +1,5 @@
 package(default_visibility=['//visibility:public'])
 
-load("@dhall//:defs.bzl", "dhall_library")
+load("@dhall//:third_party/k8s.bzl", "k8s_dhall_files")
 
-filegroup(
-    name = "dhall-k8s-1.17",
-    srcs = glob([
-        "1.17/**/*",
-    ]),
-)
-
-dhall_library(
-    name = "k8s_package_library",
-    entrypoint = "package.dhall",
-    srcs = glob(["**/*.dhall"]) 
-)
-dhall_library(
-    name = "k8s_prelude_library",
-    entrypoint = "Prelude.dhall",
-    srcs = glob(["**/*.dhall"]) 
-)
-
+k8s_dhall_files(versions = ["1.12", "1.13", "1.14", "1.15", "1.16", "1.17", "1.18", "1.19"])
