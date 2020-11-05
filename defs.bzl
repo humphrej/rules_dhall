@@ -16,8 +16,7 @@ def k8s_dhall_library(name, version, visibility=None, **kwargs):
   )
   dhall_library(
     name = "%s_prelude" % name,
-    entrypoint = "@dhall-kubernetes//:%s/Prelude.dhall" % version,
-    srcs = ["@dhall-kubernetes//:k8s-dhall-%s" % version],
+    entrypoint = "@dhall-kubernetes//:Prelude.dhall",
+    srcs = ["@dhall-kubernetes//:k8s-dhall-prelude"],
     visibility = visibility
   )
-

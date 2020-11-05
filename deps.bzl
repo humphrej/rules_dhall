@@ -6,52 +6,52 @@ def load_dhall_dependencies():
 
   http_archive(
       name = "dhall_bin",
-      sha256 = "f8312727bbd4af74d183efce2e22f7b7807246a600fcc85600945f4790e4294a",
-      urls = ["https://github.com/dhall-lang/dhall-haskell/releases/download/1.31.1/dhall-1.31.1-x86_64-linux.tar.bz2"],
+      sha256 = "9fc42f2f537bf62fd5e3afc959ec176936be448afe1ed3d3121c0d3a45b730b2",
+      urls = ["https://github.com/dhall-lang/dhall-haskell/releases/download/1.36.0/dhall-1.36.0-x86_64-linux.tar.bz2"],
       build_file_content = "exports_files(['bin/dhall'])"
   )
 
   http_archive(
       name = "dhall_bin_osx",
-      sha256 = "522fbfebfd2b3ae1d3f0a2837b3beb225ec0bc3224b4ea8189e67d9783852938",
-      urls = ["https://github.com/dhall-lang/dhall-haskell/releases/download/1.31.1/dhall-1.31.1-x86_64-macos.tar.bz2"],
+      sha256 = "266c257c75033fe86e3b801bcc23f61fb4aa0978c984cff010e40f8ca4509fe0",
+      urls = ["https://github.com/dhall-lang/dhall-haskell/releases/download/1.36.0/dhall-1.36.0-x86_64-macos.tar.bz2"],
       build_file_content = "exports_files(['bin/dhall'])"
   )
 
   http_archive(
       name = "dhall_to_yaml_bin",
-      sha256 = "04d95773f9e96340a29f2857a55fb718735b83596abacf1d7b9fa3f6004067cb",
-      urls = ["https://github.com/dhall-lang/dhall-haskell/releases/download/1.31.1/dhall-yaml-1.0.3-x86_64-linux.tar.bz2"],
+      sha256 = "a29e2546bb617a9645124816ee9441253285bf767a5c8a9b6e2753aaf03a892c",
+      urls = ["https://github.com/dhall-lang/dhall-haskell/releases/download/1.36.0/dhall-yaml-1.2.3-x86_64-linux.tar.bz2"],
       build_file_content = "exports_files(['bin/dhall-to-yaml-ng'])"
   )
 
   http_archive(
       name = "dhall_to_yaml_bin_osx",
-      sha256 = "ae98e2bd0378ba81a8213ecd479d62549667dd3518d6882a507e9c84d41be813",
-      urls = ["https://github.com/dhall-lang/dhall-haskell/releases/download/1.31.1/dhall-yaml-1.0.3-x86_64-macos.tar.bz2"],
+      sha256 = "549e072da32f063a49e98a613edd15098ada24f9e4152dd673f557fae1b9dfd9",
+      urls = ["https://github.com/dhall-lang/dhall-haskell/releases/download/1.36.0/dhall-yaml-1.2.3-x86_64-macos.tar.bz2"],
       build_file_content = "exports_files(['bin/dhall-to-yaml-ng'])"
   )
 
   http_archive(
       name = "dhall_to_json_bin",
-      sha256 = "7ec6b54f70f077d8876bb40633905f2a0a2c69e83a3ce0bd3d9f7577e1210489",
-      urls = ["https://github.com/dhall-lang/dhall-haskell/releases/download/1.31.1/dhall-json-1.6.3-x86_64-linux.tar.bz2"],
+      sha256 = "ff44c38d6b3c0f38d6d3b66be5744a33f8ac9b7351f918895b1b7fcff7fc3e40",
+      urls = ["https://github.com/dhall-lang/dhall-haskell/releases/download/1.36.0/dhall-json-1.7.3-x86_64-linux.tar.bz2"],
       build_file_content = "exports_files(['bin/dhall-to-json'])"
   )
 
   http_archive(
       name = "dhall_to_json_bin_osx",
-      sha256 = "b26e5b384502fe056cfcebed382101b30a3b2cc9438d4d967a00f9612dd4fbb0",
-      urls = ["https://github.com/dhall-lang/dhall-haskell/releases/download/1.31.1/dhall-json-1.6.3-x86_64-macos.tar.bz2"],
+      sha256 = "6aba3360d3aaa8beacca369ab19d209d7333b4203cc585a7208f8accbba6de5d",
+      urls = ["https://github.com/dhall-lang/dhall-haskell/releases/download/1.36.0/dhall-json-1.7.3-x86_64-macos.tar.bz2"],
       build_file_content = "exports_files(['bin/dhall-to-json'])"
   )
 
 def load_dhall_k8s_dependencies():
   http_archive(
       name = "dhall-kubernetes",
-      sha256 = "0bc2b5d2735ca60ae26d388640a4790bd945abf326da52f7f28a66159e56220d",
-      url = "https://github.com/dhall-lang/dhall-kubernetes/archive/v4.0.0.zip",
-      strip_prefix = "dhall-kubernetes-4.0.0",
+      sha256 = "370516b4e3424bb0a683f9e8e0a9fc5a058ae89568f2712b97ae07f3095d4e0d",
+      url = "https://github.com/dhall-lang/dhall-kubernetes/archive/a4126b7f8f0c0935e4d86f0f596176c41efbe6fe.zip",
+      strip_prefix = "dhall-kubernetes-a4126b7f8f0c0935e4d86f0f596176c41efbe6fe",
       build_file = "@dhall//:BUILD.dhall-kubernetes",
   )
 

@@ -1,9 +1,9 @@
 let kubernetes =
-      ./package.dhall sha256:d9eac5668d5ed9cb3364c0a39721d4694e4247dad16d8a82827e4619ee1d6188
+      ./package.dhall sha256:ef3845f617b91eaea1b7abb5bd62aeebffd04bcc592d82b7bd6b39dda5e5d545
 
 let _configMap1 =
       kubernetes.ConfigMap::{
-      , metadata = kubernetes.ObjectMeta::{ name = "my-configmap" }
+      , metadata = kubernetes.ObjectMeta::{ name = Some "my-configmap" }
       , data = Some
         [ { mapKey = "server.yaml", mapValue = ./server.yaml as Text } ]
       }
