@@ -13,8 +13,8 @@ sh_binary(
     name = "dhall-to-yaml",
     srcs = ["dhall-to-yaml.sh"],
     data = [
-        "@dhall_to_yaml_bin//:bin/dhall-to-yaml-ng",
-        "@dhall_to_yaml_bin_osx//:bin/dhall-to-yaml-ng",
+        "@dhall_to_json_bin//:bin/dhall-to-yaml",
+        "@dhall_to_json_bin_osx//:bin/dhall-to-yaml",
     ],
 )
 
