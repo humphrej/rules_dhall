@@ -37,7 +37,7 @@ deps      | __List of labels; optional.__ List of dhall_library targets that thi
 data      | __List of labels; optional.__ The output of these targets will copied into this package so that dhall can reference them.
 out       | __string; optional.__ Defaults to the src file prefix plus an extension of ".yaml" or ".json".
 verbose   | __bool; optional.__  If True, will output verbose logging to the console.
-args      | __List of string; optional.__ Adds additional arguments to dhall-to-yaml or dhall-to-json.
+dhall_args      | __List of string; optional.__ Adds additional arguments to dhall-to-yaml or dhall-to-json.
 
 See example [abcd](https://github.com/humphrej/dhall-bazel/tree/master/examples/abcd)
 

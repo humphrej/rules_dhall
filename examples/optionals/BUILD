@@ -12,7 +12,7 @@ dhall_yaml(
     name = "optionals_with_args_yaml",
     entrypoint = "optionals.dhall",
     out = "optionals_with_args.yaml",
-    args = [ "--omit-empty" ]
+    dhall_args = [ "--omit-empty" ]
 )
 # This one fixes the types to get the same outcome
 dhall_yaml(
