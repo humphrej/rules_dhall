@@ -36,6 +36,7 @@ def _dhall_library_impl(ctx):
     progress_message = "Generating dhall files into '%s'" % output.path,
     tools = [ ctx.attr._dhall.files_to_run, ctx.attr._dhall_library.files_to_run ],
     command = " ".join(cmd),
+    mnemonic = "DhallCompile",
     env = {
         "XDG_CACHE_HOME": ".cache"
     }

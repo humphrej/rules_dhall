@@ -43,6 +43,7 @@ def _dhall_output_impl(ctx):
     progress_message = "Generating output into '%s'" % output.path,
     tools = [ ctx.attr._dhall_command.files_to_run, ctx.attr._dhall_output.files_to_run ],
     command = " ".join(cmd),
+    mnemonic = "DhallCompile",
     env = {
         "XDG_CACHE_HOME": ".cache",
         "_DHALL_ARGS": " ".join(ctx.attr.args)
