@@ -45,7 +45,6 @@ def _dhall_output_impl(ctx):
     command = " ".join(cmd),
     mnemonic = "DhallCompile",
     env = {
-        "XDG_CACHE_HOME": ".cache",
         "_DHALL_ARGS": " ".join(ctx.attr.dhall_args)
     }
   )

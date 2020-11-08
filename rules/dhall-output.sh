@@ -29,15 +29,18 @@ fi
 DHALL_TO_YAML_BIN=$1
 OUTPUT_FILE=$2
 DHALL_FILE=$3
-TMP_CACHE=$PWD/$XDG_CACHE_HOME
+export XDG_CACHE_HOME="$PWD/.cache"
 
-[ $DEBUG -eq 1 ] && echo Working directory is ${PWD}
-[ $DEBUG -eq 1 ] && echo Using cache at ${TMP_CACHE}
+if [ $DEBUG -eq 1 ]; then
+  echo Working directory: ${PWD}
+  echo Cache: ${XDG_CACHE_HOME}
+  echo Dhall output binary: ${DHALL_TO_YAML_BIN}
+fi
 
 unpack_tars() {
   for tar in $*; do
-    [ $DEBUG -eq 1 ] && echo Unpacking $tar into $TMP_CACHE
-    tar -xf $tar --strip-components=2 -C $TMP_CACHE/dhall .cache
+    [ $DEBUG -eq 1 ] && echo Unpacking $tar into $XDG_CACHE_HOME
+    tar -xf $tar --strip-components=2 -C $XDG_CACHE_HOME/dhall .cache
   done
 }
 copy_resources() {
@@ -49,6 +52,7 @@ copy_resources() {
     cp -f $source $target
   done
 }
+
 dump_cache() {
   if [ $DEBUG -eq 1 ]; then
     echo DUMPING CACHE $1 START 
@@ -57,12 +61,13 @@ dump_cache() {
   fi
 }
 
-mkdir -p $TMP_CACHE/dhall
+mkdir -p $XDG_CACHE_HOME/dhall
 
 unpack_tars $TARS
+
 copy_resources $RESOURCES
 
-dump_cache BEFORE_GEN $TMP_CACHE/dhall
+dump_cache BEFORE_GEN $XDG_CACHE_HOME/dhall
 
 [ $DEBUG -eq 1 ] && echo Generating $OUTPUT_FILE
 $DHALL_TO_YAML_BIN ${_DHALL_ARGS} --file $DHALL_FILE >$OUTPUT_FILE
