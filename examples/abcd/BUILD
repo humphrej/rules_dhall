@@ -1,63 +1,45 @@
 package(default_visibility = ["//visibility:public"])
 
-load("//:defs.bzl", "dhall_library", "dhall_yaml", "dhall_json")
+load("//:defs.bzl", "dhall_library_macro", "dhall_yaml", "dhall_json", "dhall_macro")
 
-dhall_library(
-    name = "a_dhall_library",
+dhall_macro(
+    name = "a",
     entrypoint = "a.dhall",
     deps = [
-        ":b_dhall_library",
-        ":c_dhall_library",
+        ":b",
+        ":c",
     ],
 )
 
-dhall_library(
-    name = "b_dhall_library",
+dhall_library_macro(
+    name = "b",
     entrypoint = "b.dhall",
     deps = [
-        ":d_dhall_library",
+        ":d",
     ],
 )
 
-dhall_library(
-    name = "c_dhall_library",
+dhall_library_macro(
+    name = "c",
     entrypoint = "c.dhall",
 )
 
-dhall_library(
-    name = "d_dhall_library",
+dhall_library_macro(
+    name = "d",
     entrypoint = "d.dhall",
 )
 
-# This one uses an implicit output filename of a.yaml
-dhall_yaml(
-    name = "a_yaml",
-    entrypoint = "a.dhall",
-    deps = [
-        ":b_dhall_library",
-        ":c_dhall_library",
-    ],
-)
-
-# This one uses an explicit output filename of ouch.yaml
+# This one adds an additional yaml target useing an explicit output filename of ouch.yaml
 dhall_yaml(
     name = "ouch_yaml",
     entrypoint = "a.dhall",
     out = "ouch.yaml",
     deps = [
-        ":b_dhall_library",
-        ":c_dhall_library",
+        ":b",
+        ":c",
     ],
 )
-# This one generates json
-dhall_json(
-    name = "a_json",
-    entrypoint = "a.dhall",
-    deps = [
-        ":b_dhall_library",
-        ":c_dhall_library",
-    ],
-)
+
 # This one does not use any intermediate targets
 dhall_yaml(
     name = "a_no_intermediates_yaml",
@@ -65,5 +47,3 @@ dhall_yaml(
     out = "a_no_intermediates.yaml",
     srcs = [ "b.dhall", "c.dhall", "d.dhall" ]
 )
-
-

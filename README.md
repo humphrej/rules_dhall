@@ -17,8 +17,8 @@ rule is a tar archive that contains 3 files:
    
 Attribute  | Description |
 ---------- |  ---- |
-name       | __string; required.__ 
-entrypoint | __label; required.__  This is name of the dhall file that contains the expression that is the entrypoint to the package.  Any dhall references from another dhall package _must_ include the sha256 hash.
+name       | __string; required.__  This name must be bash variable safe (alphanumeric with underscores)
+entrypoint | __label; required.__  This is name of the dhall file that contains the expression that is the entrypoint to the package.  Any dhall references from another dhall package _must_ include the sha256 hash (see dhall_freeze).
 srcs       | __List of labels; optional.__ List of source files that are referenced from *entrypoint*.
 deps       | __List of labels; optional.__ List of dhall_library targets that this rule should depend on.
 data       | __List of labels; optional.__ The output of these targets will copied into this package so that dhall can reference them.
@@ -31,7 +31,8 @@ See example [abcd](https://github.com/humphrej/dhall-bazel/tree/master/examples/
 
 Attribute | Description |
 ----------| -----------| 
-entrypoint | __label; required.__  This is name of the dhall file that contains the expression that is the entrypoint to the package.  Any dhall references from another dhall package _must_ include the sha256 hash.
+name       | __string; required.__ 
+entrypoint | __label; required.__  This is name of the dhall file that contains the expression that is the entrypoint to the package.  Any dhall references from another dhall package _must_ include the sha256 hash (see dhall_freeze). 
 srcs       | __List of labels; optional.__ List of source files that are referenced from *entrypoint*.
 deps      | __List of labels; optional.__ List of dhall_library targets that this rule depends on.
 data      | __List of labels; optional.__ The output of these targets will copied into this package so that dhall can reference them.
@@ -40,6 +41,25 @@ verbose   | __bool; optional.__  If True, will output verbose logging to the con
 dhall_args      | __List of string; optional.__ Adds additional arguments to dhall-to-yaml or dhall-to-json.
 
 See example [abcd](https://github.com/humphrej/dhall-bazel/tree/master/examples/abcd)
+
+### dhall_freeze
+   This rule outputs a frozen (and therefore also formated) dhall expression of the given entrypoint. It is meant to be called via `bazel run`. Dhall import expressions referencing `deps` must be of the form `env:DHALLBAZEL_ + dep name` such that bazel can inject the paths to the dependencies.
+
+Attribute | Description |
+----------| -----------| 
+entrypoint | __label; required.__  This is name of the dhall file that contains the expression that is the entrypoint to the package.
+srcs       | __List of labels; optional.__ List of source files that are referenced from *entrypoint*.
+deps      | __List of labels; optional.__ List of dhall_library targets that this rule depends on.
+data      | __List of labels; optional.__ The output of these targets will copied into this package so that dhall can reference them.
+out       | __string; optional.__ Defaults to the src file prefix plus an extension of ".yaml" or ".json".
+verbose   | __bool; optional.__  If True, will output verbose logging to the console.
+
+## Macros reference
+### dhall_library_macro
+   This macros outputs the `dhall_library` rule and the `dhall_freeze` rule (with `_freeze` added to the rule name).
+
+### dhall_macro
+   In addition to rules output from `dhall_library_macro`, this macros outputs the `dhall_yaml` and `dhall_json` rules with `_yaml` or `_json` suffices.
 
 ## Command targets
 
@@ -54,7 +74,7 @@ bazel run //cmds:dhall-to-json -- —help
 It is possible to use these rules in combination with [dhall-kubernetes](https://github.com/dhall-lang/dhall-kubernetes). See example [k8s](https://github.com/humphrej/dhall-bazel/tree/master/examples/k8s).
 
 ## Note on freezing dependencies
-rules_dhall relies on the semantic integrity checking feature of dhall.  For this to work, expressions referenced from another dhall package must include the sha256 hash. See "dhall freeze" for details.
+rules_dhall relies on the semantic integrity checking feature of dhall.  For this to work, expressions referenced from another dhall package must include the sha256 hash. See the `dhall_freeze` rule and "dhall freeze" for details.
 
 ## Note on hashing
 To find the hash for a given package/tar:

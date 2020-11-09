@@ -1,14 +1,14 @@
 package(default_visibility = ["//visibility:public"])
 
-load("//:defs.bzl", "dhall_yaml", "k8s_dhall_library")
+load("//:defs.bzl", "dhall_macro", "k8s_dhall_library")
 
-k8s_dhall_library(name = "k8s_1.16", version = "1.16")
+k8s_dhall_library(name = "k8s_1_16", version = "1.16")
 
-dhall_yaml(
-    name = "ingress_yaml",
+dhall_macro(
+    name = "ingress",
     entrypoint = "ingress.dhall",
     deps = [
-        ":k8s_1.16_package",
-        ":k8s_1.16_prelude",
+        ":k8s_1_16_package",
+        ":k8s_1_16_prelude",
     ],
 )

@@ -14,3 +14,5 @@ sh_binary(
     name = "dhall-hash",
     srcs = ["dhall-hash.sh"],
 )
+
+exports_files(["dhall-freeze.sh"])

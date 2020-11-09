@@ -1,10 +1,10 @@
 let Prelude =
-      ./Prelude.dhall sha256:10db3c919c25e9046833df897a8ffe2701dc390fa0893d958c3430524be5a43e
+      env:DHALLBAZEL_k8s_1_16_prelude sha256:10db3c919c25e9046833df897a8ffe2701dc390fa0893d958c3430524be5a43e
 
 let map = Prelude.List.map
 
 let kubernetes =
-      ./1.16/package.dhall sha256:d4dc6b344408680ff1e30833881145ee79a9061758ed48dba3a9255d10cba9d4
+      env:DHALLBAZEL_k8s_1_16_package sha256:d4dc6b344408680ff1e30833881145ee79a9061758ed48dba3a9255d10cba9d4
 
 let Service = { name : Text, host : Text, version : Text }
 
@@ -12,31 +12,31 @@ let services = [ { name = "foo", host = "foo.example.com", version = "2.3" } ]
 
 let makeTLS
     : Service → kubernetes.IngressTLS.Type
-    =   λ(service : Service)
-      → { hosts = Some [ service.host ]
+    = λ(service : Service) →
+        { hosts = Some [ service.host ]
         , secretName = Some "${service.name}-certificate"
         }
 
 let makeRule
     : Service → kubernetes.IngressRule.Type
-    =   λ(service : Service)
-      → { host = Some service.host
+    = λ(service : Service) →
+        { host = Some service.host
         , http = Some
-            { paths =
-              [ { backend =
-                    { serviceName = service.name
-                    , servicePort = kubernetes.IntOrString.Int 80
-                    }
-                , path = None Text
+          { paths =
+            [ { backend =
+                { serviceName = service.name
+                , servicePort = kubernetes.IntOrString.Int 80
                 }
-              ]
-            }
+              , path = None Text
+              }
+            ]
+          }
         }
 
 let mkIngress
     : List Service → kubernetes.Ingress.Type
-    =   λ(inputServices : List Service)
-      → let annotations =
+    = λ(inputServices : List Service) →
+        let annotations =
               toMap
                 { `kubernetes.io/ingress.class` = "nginx"
                 , `kubernetes.io/ingress.allow-http` = "false"
@@ -77,4 +77,3 @@ let mkIngress
             }
 
 in  mkIngress services
-
