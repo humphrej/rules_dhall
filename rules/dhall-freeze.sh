@@ -5,12 +5,14 @@
 
 set -euo pipefail
 
-DEBUG=0
-
+FAST=@@FAST@@
+DEBUG=@@DEBUG@@
 DHALL_BIN=$(realpath -s @@DHALL_BIN@@)
 ENTRYPOINT=@@ENTRYPOINT@@
 DEPS=@@DEPS@@
 export XDG_CACHE_HOME="$PWD/.cache"
+
+IMPORTHASH=()
 
 if [ $DEBUG -eq 1 ]; then
   echo Working directory: ${PWD}
@@ -29,21 +31,15 @@ unpack_tarfile() {
 unpack_tars() {
   for (( i=0; i<${#DEPS[@]} ; i+=2 ));
   do
-    tar="${DEPS[i+1]}"
-    name="${DEPS[i]}"
+    local tar="${DEPS[i+1]}"
+    local name="${DEPS[i]}"
     [ $DEBUG -eq 1 ] && echo Unpacking $tar into $XDG_CACHE_HOME && tar -tvf $tar
     tar -xf $tar --strip-components=2 -C $XDG_CACHE_HOME/dhall .cache
     tar -xOf $tar source.dhall > $name
+    local hash=$(tar -xOf $tar binary.dhall | grep -Po '(?<=1220).*')
     export "DHALLBAZEL_$name=$PWD/$name"
-  done
-}
-copy_resources() {
-  for resource in $*; do
-    source=$(cut -d':' -f 1 <<< $resource)
-    target=$(cut -d':' -f 2 <<< $resource)
-
-    [ $DEBUG -eq 1 ] && echo Copying $source to $target
-    cp -f $source $target
+    IMPORTHASH+=("$name")
+    IMPORTHASH+=("$hash")
   done
 }
 
@@ -62,7 +58,25 @@ unpack_tars
 dump_cache BEFORE_GEN $XDG_CACHE_HOME/dhall
 
 cd $(dirname ${ENTRYPOINT})
-filename="$(basename ${ENTRYPOINT})"
+filename=$(basename ${ENTRYPOINT})
+input=$(<"$filename")
 
-[ $DEBUG -eq 1 ] && echo Freezing: ${DHALL_BIN} freeze --all \< "${filename}"
-exec ${DHALL_BIN} freeze --all < "${filename}"
+if [ $FAST -eq 1 ]; then
+  for (( i=0; i<${#IMPORTHASH[@]} ; i+=2 ));
+  do
+    name="${IMPORTHASH[i]}"
+    ihash="${IMPORTHASH[i+1]}"
+    [ $DEBUG -eq 1 ] && echo Use $ihash for $name
+    input=$(perl -0777 -pe "s/(env:DHALLBAZEL_$name)\s+sha256:\w+/\1 sha256:$ihash /gmu" <<< "${input}" | perl -0777 -pe "s/(env:DHALLBAZEL_$name)(?:\s+|\z)(?!sha256:)/\1 sha256:$ihash /gmu")
+  done
+
+  input=$(${DHALL_BIN} format <<< "${input}")
+
+  [ $DEBUG -eq 1 ] && echo Freeze Check: ${DHALL_BIN} freeze --check
+  ${DHALL_BIN} freeze --check <<< "${input}"
+else
+  [ $DEBUG -eq 1 ] && echo Freezing: ${DHALL_BIN} freeze --all
+  exec ${DHALL_BIN} freeze --all <<< "${input}"
+fi
+
+cat <<< "${input}"

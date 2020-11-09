@@ -21,6 +21,16 @@ def _dhall_freeze_impl(ctx):
 
   substitutions["@@DEPS@@"] = shell.array_literal(deps)
 
+  if ctx.attr.verbose:
+    substitutions["@@DEBUG@@"] = "1"
+  else:
+    substitutions["@@DEBUG@@"] = "0"
+
+  if ctx.attr._fast:
+    substitutions["@@FAST@@"] = "1"
+  else:
+    substitutions["@@FAST@@"] = "0"
+
   for data in ctx.attr.data:
     inputs.append( data.files.to_list()[0] )
 
@@ -48,7 +58,8 @@ dhall_freeze = rule(
       "srcs": attr.label_list(allow_files = [".dhall"]),
       "deps": attr.label_list(),
       "data": attr.label_list(),
-      "verbose": attr.bool( default = False ), 
+      "verbose": attr.bool( default = False ),
+      "_fast": attr.bool( default = True ),
       "_dhall": attr.label(
             default = Label("//cmds:dhall"),
             executable = True,
