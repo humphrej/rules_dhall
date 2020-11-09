@@ -23,8 +23,7 @@ def _dhall_library_impl(ctx):
     inputs.append( data.files.to_list()[0] )
 
   # add all sources to the inputs
-  for src in ctx.attr.srcs:
-    file = src.files.to_list()[0]
+  for file in ctx.files.srcs:
     inputs.append(file)
 
   cmd.append(ctx.attr._dhall.files_to_run.executable.path)
