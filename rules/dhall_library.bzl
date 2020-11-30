@@ -72,3 +72,46 @@ dhall_library = rule(
     }
 )
 
+def _dhall_library_docs_impl(ctx):
+  output = ctx.actions.declare_file(ctx.label.name + "_tar")
+
+  inputs = []
+  for file in ctx.files.srcs:
+    inputs.append(file)
+
+  cmd = []
+  cmd.append(ctx.attr._dhall_library_docs.files_to_run.executable.path)
+  cmd.append(ctx.attr._dhall_docs.files_to_run.executable.path)
+  cmd.append(ctx.files.srcs[0].dirname) # TODO should be a better way...
+  cmd.append(output.path)
+
+  ctx.actions.run_shell(
+    inputs = inputs,
+    outputs = [ output ],
+    progress_message = "Creating dhall library docs into '%s'" % output.path,
+    tools = [ ctx.attr._dhall_docs.files_to_run, ctx.attr._dhall_library_docs.files_to_run ],
+    command = " ".join(cmd),
+  )
+
+  return [ DefaultInfo(files = depset([ output ])) ]
+
+
+dhall_library_docs = rule(
+    implementation = _dhall_library_docs_impl,
+    attrs = {
+      "srcs": attr.label_list(allow_files = [".dhall"]),
+      "deps": attr.label_list(),
+      "data": attr.label_list(),
+      "verbose": attr.bool( default = False ), 
+      "_dhall_docs": attr.label(
+            default = Label("//cmds:dhall-docs"),
+            executable = True,
+            cfg = "host"
+      ),
+      "_dhall_library_docs": attr.label(
+            default = Label("//rules:dhall-docs"),
+            executable = True,
+            cfg = "host"
+      ),
+    }
+)

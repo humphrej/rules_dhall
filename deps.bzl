@@ -46,6 +46,20 @@ def load_dhall_dependencies():
       build_file_content = "exports_files(['bin/dhall-to-json', 'bin/dhall-to-yaml'])"
   )
 
+  http_archive(
+      name = "dhall_docs_bin",
+      sha256 = "20a7643404ab112f9c0216de294941419a6a57274b3f943265988b87defa5358",
+      urls = ["https://github.com/dhall-lang/dhall-haskell/releases/download/1.36.0/dhall-docs-1.0.2-x86_64-linux.tar.bz2"],
+      build_file_content = "exports_files(['bin/dhall-docs'])"
+  )
+
+  http_archive(
+      name = "dhall_docs_bin_osx",
+      sha256 = "64c97f4185f9ed53d8887d5f720abccbb57cb4bdc6b38abd916c6daaf66b3ec9",
+      urls = ["https://github.com/dhall-lang/dhall-haskell/releases/download/1.36.0/dhall-docs-1.0.2-x86_64-macos.tar.bz2"],
+      build_file_content = "exports_files(['bin/dhall-docs'])"
+  )
+
 def load_dhall_k8s_dependencies():
   http_archive(
       name = "dhall-kubernetes",

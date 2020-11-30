@@ -1,8 +1,9 @@
-load("//rules:dhall_library.bzl", _dhall_library="dhall_library")
+load("//rules:dhall_library.bzl", _dhall_library="dhall_library", _dhall_library_docs="dhall_library_docs")
 load("//rules:dhall_freeze.bzl", _dhall_freeze="dhall_freeze")
 load("//rules:dhall_output.bzl", _dhall_yaml="dhall_yaml", _dhall_json="dhall_json")
 
 dhall_library = _dhall_library
+dhall_library_docs = _dhall_library_docs
 dhall_yaml = _dhall_yaml
 dhall_json = _dhall_json
 dhall_freeze = _dhall_freeze
@@ -31,5 +32,10 @@ def k8s_dhall_library(name, version, visibility=None, **kwargs):
     name = "%s_prelude" % name,
     entrypoint = "@dhall-kubernetes//:Prelude.dhall",
     srcs = ["@dhall-kubernetes//:k8s-dhall-prelude"],
+    visibility = visibility
+  )
+  dhall_library_docs(
+    name = "%s_package_docs" % name,
+    srcs = ["@dhall-kubernetes//:k8s-dhall-%s" % version],
     visibility = visibility
   )

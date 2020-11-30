@@ -6,6 +6,11 @@ sh_binary(
 )
 
 sh_binary(
+    name = "dhall-docs",
+    srcs = ["dhall-docs.sh"],
+)
+
+sh_binary(
     name = "dhall-output",
     srcs = ["dhall-output.sh"],
 )

@@ -28,3 +28,12 @@ native_binary(
         "@bazel_tools//src/conditions:darwin": "@dhall_to_json_bin_osx//:bin/dhall-to-json",
     }),
 )
+
+native_binary(
+    name = "dhall-docs",
+    out = "dhall-docs",
+    src = select({
+        "@bazel_tools//src/conditions:linux_x86_64": "@dhall_docs_bin//:bin/dhall-docs",
+        "@bazel_tools//src/conditions:darwin": "@dhall_docs_bin_osx//:bin/dhall-docs",
+    }),
+)
