@@ -101,7 +101,7 @@ dhall_library_docs = rule(
     attrs = {
       "srcs": attr.label_list(allow_files = [".dhall"]),
       "deps": attr.label_list(),
-      "data": attr.label_list(),
+      "data": attr.label_list(allow_files = True),
       "verbose": attr.bool( default = False ), 
       "_dhall_docs": attr.label(
             default = Label("//cmds:dhall-docs"),

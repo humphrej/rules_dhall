@@ -57,7 +57,7 @@ dhall_freeze = rule(
       "entrypoint": attr.label(mandatory = True, allow_single_file = True),
       "srcs": attr.label_list(allow_files = [".dhall"]),
       "deps": attr.label_list(),
-      "data": attr.label_list(),
+      "data": attr.label_list(allow_files = True),
       "verbose": attr.bool( default = False ),
       "_fast": attr.bool( default = True ),
       "_dhall": attr.label(
