@@ -22,7 +22,7 @@ done
 shift $((OPTIND - 1))
 
 if [ $# -lt 3 ]; then
-  echo "Usage: $0 [-v] [-d <dep-tar-file>] <dhall-output-binary> <output-file> <dhall-input-file>"
+  echo "Usage: $0 [-v] [-d <dep-tar-file>] [-r <source_path>:<target_path>] <dhall-output-binary> <output-file> <dhall-input-file>"
   exit 2
 fi
 
@@ -35,6 +35,8 @@ if [ $DEBUG -eq 1 ]; then
   echo Working directory: ${PWD}
   echo Cache: ${XDG_CACHE_HOME}
   echo Dhall output binary: ${DHALL_TO_YAML_BIN}
+  echo Package deps: ${TARS}
+  echo Resources: ${RESOURCEs}
 fi
 
 unpack_tars() {
