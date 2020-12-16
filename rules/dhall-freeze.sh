@@ -36,7 +36,7 @@ unpack_tars() {
     [ $DEBUG -eq 1 ] && echo Unpacking $tar into $XDG_CACHE_HOME && tar -tvf $tar
     tar -xf $tar --strip-components=2 -C $XDG_CACHE_HOME/dhall .cache
     tar -xOf $tar source.dhall > $name
-    local hash=$(tar -xOf $tar binary.dhall | grep -Po '(?<=1220).*')
+    local hash=$(tar -xOf $tar binary.dhall | grep -o '1220\w*' | sed s/^1220//)
     export "DHALLBAZEL_$name=$PWD/$name"
     IMPORTHASH+=("$name")
     IMPORTHASH+=("$hash")
