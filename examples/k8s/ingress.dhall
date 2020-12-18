@@ -1,10 +1,10 @@
 let Prelude =
-      env:DHALLBAZEL_k8s_1_16_prelude sha256:10db3c919c25e9046833df897a8ffe2701dc390fa0893d958c3430524be5a43e
+      env:DHALLBAZEL_prelude sha256:21754b84b493b98682e73f64d9d57b18e1ca36a118b81b33d0a243de8455814b
 
 let map = Prelude.List.map
 
 let kubernetes =
-      env:DHALLBAZEL_k8s_1_16_package sha256:d4dc6b344408680ff1e30833881145ee79a9061758ed48dba3a9255d10cba9d4
+      env:DHALLBAZEL_k8s sha256:d4dc6b344408680ff1e30833881145ee79a9061758ed48dba3a9255d10cba9d4
 
 let Service = { name : Text, host : Text, version : Text }
 

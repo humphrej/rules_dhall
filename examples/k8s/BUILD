@@ -1,14 +1,16 @@
 package(default_visibility = ["//visibility:public"])
 
-load("//:defs.bzl", "dhall_macro", "k8s_dhall_library")
+load("//:defs.bzl", "dhall_k8s", "dhall_macro", "dhall_prelude")
 
-k8s_dhall_library(name = "k8s_1_16", version = "1.16")
+dhall_k8s(name = "k8s", version = "1.16")
+dhall_prelude(name = "prelude")
 
 dhall_macro(
     name = "ingress",
     entrypoint = "ingress.dhall",
     deps = [
-        ":k8s_1_16_package",
-        ":k8s_1_16_prelude",
+        ":k8s",
+        ":prelude",
     ],
+    tags = ["block-network"],
 )

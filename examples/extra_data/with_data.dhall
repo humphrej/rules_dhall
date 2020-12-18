@@ -1,4 +1,1 @@
-{ inline = "some inline data"
-, extra =
-    ./extra.txt as Text
-}
+{ inline = "some inline data", extra = ./extra.txt as Text }

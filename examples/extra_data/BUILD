@@ -6,4 +6,5 @@ dhall_macro(
     name = "with_data",
     entrypoint = "with_data.dhall",
     data = [":extra.txt"],
+    tags = ["block-network"],
 )
