@@ -32,6 +32,7 @@ def dhall_prelude(name, visibility = None, **kwargs):
     )
     dhall_library_docs(
         name = "%s_docs" % name,
+        entrypoint = "@dhall-prelude//:Prelude/package.dhall",
         srcs = ["@dhall-prelude//:dhall-prelude"],
         visibility = visibility,
         tags = ["block-network"],
@@ -51,6 +52,7 @@ def dhall_k8s(name, version, visibility = None, **kwargs):
     )
     dhall_library_docs(
         name = "%s_docs" % name,
+        entrypoint = "@dhall-kubernetes//:%s/package.dhall" % version,
         srcs = ["@dhall-kubernetes//:k8s-dhall-%s" % version],
         visibility = visibility,
         tags = ["block-network"],

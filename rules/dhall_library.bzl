@@ -82,7 +82,7 @@ def _dhall_library_docs_impl(ctx):
   cmd = []
   cmd.append(ctx.attr._dhall_library_docs.files_to_run.executable.path)
   cmd.append(ctx.attr._dhall_docs.files_to_run.executable.path)
-  cmd.append(ctx.files.srcs[0].dirname) # TODO should be a better way...
+  cmd.append(ctx.files.entrypoint[0].dirname)
   cmd.append(output.path)
 
   ctx.actions.run_shell(
@@ -99,7 +99,8 @@ def _dhall_library_docs_impl(ctx):
 dhall_library_docs = rule(
     implementation = _dhall_library_docs_impl,
     attrs = {
-      "srcs": attr.label_list(allow_files = [".dhall"]),
+      "entrypoint": attr.label(mandatory = True, allow_single_file = True),
+      "srcs": attr.label_list(allow_files = True),
       "deps": attr.label_list(),
       "data": attr.label_list(allow_files = True),
       "verbose": attr.bool( default = False ), 
