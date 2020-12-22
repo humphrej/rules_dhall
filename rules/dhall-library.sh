@@ -2,18 +2,24 @@
 #
 # Script that creates a tarfile of the encoded input plus all dependencies
 #
+
+# This function canonicalizes a path, including resolving symlinks
+# Behavior is equivalent to `realpath` from Linux or brew coreutils
 # https://stackoverflow.com/a/18443300
 function _realpath() {
   local OURPWD=$PWD
-  cd "$(dirname "$1")"
-  local LINK=$(readlink "$(basename "$1")")
+  cd "$(dirname "$1")" || return 1
+  local LINK
+  LINK=$(readlink "$(basename "$1")")
   while [ "$LINK" ]; do
-    cd "$(dirname "$LINK")"
+    cd "$(dirname "$LINK")" || return 1
     LINK=$(readlink "$(basename "$1")")
   done
-  local REALPATH="$PWD/$(basename "$1")"
-  cd "$OURPWD"
+  local REALPATH
+  REALPATH="$PWD/$(basename "$1")"
+  cd "$OURPWD" || return 1
   echo "$REALPATH"
+  return 0
 }
 
 DEBUG=0
