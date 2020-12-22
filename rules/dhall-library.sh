@@ -36,7 +36,7 @@ if [ $DEBUG -eq 1 ]; then
   echo Cache: ${XDG_CACHE_HOME}
   echo Dhall binary: ${DHALL_BIN}
   echo Package deps: ${TARS}
-  echo Resources: ${RESOURCEs}
+  echo Resources: ${RESOURCES}
 fi
 
 unpack_tarfile() {
