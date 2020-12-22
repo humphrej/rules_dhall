@@ -2,13 +2,53 @@
 #
 # Script that creates an output from a dhall file and a set of dependencies
 #
+set -euo pipefail
+
+###############
+## FUNCTIONS ##
+###############
+function unpack_tars() {
+  # $TARS is formated as a space-separated list of names and paths like
+  # k8s generators/k8s_tar prelude generators/prelude_tar
+  for arg in "$@"
+  do
+    debug_log "Unpacking $arg into $XDG_CACHE_HOME"
+    debug_log "$(tar -tvf "$arg")"
+    tar -xf "$arg" --strip-components=2 -C "$XDG_CACHE_HOME/dhall" .cache
+  done
+}
+
+function copy_resources() {
+  for resource in "$@"; do
+    local source_path
+    source_path=$(cut -d':' -f 1 <<< "${resource}")
+    local target_path
+    target_path=$(cut -d':' -f 2 <<< "${resource}")
+
+    debug_log "Copying $source_path to $target_path"
+    cp -f "$source_path" "$target_path"
+  done
+}
+
+function dump_cache() {
+  if [ "$DEBUG" -eq 1 ]
+  then
+    echo "DUMPING CACHE $1 START" >&2
+    ls -l "$2" >&2
+    echo "DUMPING CACHE $1 STOP" >&2
+  fi
+}
+
 function debug_log() {
- if [ $DEBUG -eq 1 ]
+ if [ "$DEBUG" -eq 1 ]
  then
     echo "$(basename "$0") DEBUG: $1" >&2
   fi
 }
 
+##########
+## MAIN ##
+##########
 DEBUG=0
 
 TARS=""
@@ -45,36 +85,6 @@ debug_log "Cache: ${XDG_CACHE_HOME}"
 debug_log "Dhall output binary: ${DHALL_TO_YAML_BIN}"
 debug_log "Package deps: ${TARS}"
 debug_log "Resources: ${RESOURCES}"
-
-unpack_tars() {
-  # $TARS is formated as a space-separated list of names and paths like
-  # k8s generators/k8s_tar prelude generators/prelude_tar
-  for arg in "$@"
-  do
-    debug_log "Unpacking $arg into $XDG_CACHE_HOME"
-    debug_log "$(tar -tvf "$arg")"
-    tar -xf "$arg" --strip-components=2 -C "$XDG_CACHE_HOME/dhall" .cache
-  done
-}
-
-copy_resources() {
-  for resource in "$@"; do
-    source=$(cut -d':' -f 1 <<< "${resource}")
-    target=$(cut -d':' -f 2 <<< "${resource}")
-
-    debug_log "Copying $source to $target"
-    cp -f "$source" "$target"
-  done
-}
-
-dump_cache() {
-  if [ $DEBUG -eq 1 ]
-  then
-    echo "DUMPING CACHE $1 START" >&2
-    ls -l "$2" >&2
-    echo "DUMPING CACHE $1 STOP" >&2
-  fi
-}
 
 mkdir -p "$XDG_CACHE_HOME/dhall"
 

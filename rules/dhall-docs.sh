@@ -2,8 +2,17 @@
 #
 # Script that outputs dhall library docs
 #
-
 set -euo pipefail
+
+###############
+## FUNCTIONS ##
+###############
+function debug_log() {
+ if [ "$DEBUG" -eq 1 ]
+ then
+    echo "$(basename "$0") DEBUG: $1" >&2
+  fi
+}
 
 # This function canonicalizes a path, including resolving symlinks
 # Behavior is equivalent to `realpath` from Linux or brew coreutils
@@ -24,12 +33,9 @@ function _realpath() {
   return 0
 }
 
-function debug_log() {
- if [ $DEBUG -eq 1 ]
- then
-    echo "$(basename "$0") DEBUG: $1" >&2
-  fi
-}
+##########
+## MAIN ##
+##########
 
 DEBUG=0
 
@@ -44,9 +50,21 @@ while getopts "v:" arg; do
 done
 shift $((OPTIND - 1))
 
-DHALL_DOCS_BIN=$(_realpath "$1")
-INPUT=$(_realpath "$2")
-OUTPUT=$(_realpath "$3")
+if ! DHALL_DOCS_BIN=$(_realpath "$1")
+then
+  echo "Unable to canonicalize path for $1! Builds could fail on macOS. Falling back to the non-canonical path."
+  DHALL_DOCS_BIN=$1
+fi
+if ! INPUT=$(_realpath "$2")
+then
+  echo "Unable to canonicalize path for $2! Builds could fail on macOS. Falling back to the non-canonical path."
+  INPUT=$2
+fi
+if ! OUTPUT=$(_realpath "$3")
+then
+  echo "Unable to canonicalize path for $3! Builds could fail on macOS. Falling back to the non-canonical path."
+  OUTPUT="$3"
+fi
 export XDG_CACHE_HOME="$PWD/.cache"
 export HOME="$PWD"
 

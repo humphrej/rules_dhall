@@ -2,19 +2,57 @@
 #
 # Script that outputs frozen dhall
 #
-
 set -euo pipefail
 
+###############
+## FUNCTIONS ##
+###############
+function dump_cache() {
+  if [ "$DEBUG" -eq 1 ]
+  then
+    echo "DUMPING CACHE $1 START" >&2
+    ls -l "$2" >&2
+    echo "DUMPING CACHE $1 STOP" >&2
+  fi
+}
+
 function debug_log() {
- if [ $DEBUG -eq 1 ]
+ if [ "$DEBUG" -eq 1 ]
  then
     echo "$(basename "$0") DEBUG: $1" >&2
   fi
 }
 
+# This function canonicalizes a path, including resolving symlinks
+# Behavior is equivalent to `realpath` from Linux or brew coreutils
+# https://stackoverflow.com/a/18443300
+function _realpath() {
+  local OURPWD=$PWD
+  cd "$(dirname "$1")" || return 1
+  local LINK
+  LINK=$(readlink "$(basename "$1")")
+  while [ "$LINK" ]; do
+    cd "$(dirname "$LINK")" || return 1
+    LINK=$(readlink "$(basename "$1")")
+  done
+  local REALPATH
+  REALPATH="$PWD/$(basename "$1")"
+  cd "$OURPWD" || return 1
+  echo "$REALPATH"
+  return 0
+}
+
+##########
+## MAIN ##
+##########
+
 FAST=@@FAST@@
 DEBUG=@@DEBUG@@
-DHALL_BIN=$(realpath -s @@DHALL_BIN@@)
+if ! DHALL_BIN=$(_realpath @@DHALL_BIN@@)
+then
+  echo "Unable to canonicalize path for @@DHALL_BIN@@! Builds could fail on macOS. Falling back to the non-canonical path."
+  DHALL_BIN=@@DHALL_BIN@@
+fi
 ENTRYPOINT=@@ENTRYPOINT@@
 DEPS=@@DEPS@@
 export XDG_CACHE_HOME="$PWD/.cache"
@@ -26,14 +64,7 @@ debug_log "Cache: ${XDG_CACHE_HOME}"
 debug_log "Dhall binary: ${DHALL_BIN}"
 debug_log "Package deps: ${DEPS[*]}"
 
-unpack_tarfile() {
-  DEP_TARFILE=$1
-  DEST_DIR=$2
-  debug_log "${TARFILE} Unpacking $DEP_TARFILE into $DEST_DIR"
-  tar -xf "$DEP_TARFILE" -C "$DEST_DIR"
-}
-
-unpack_tars() {
+unpack_tars_freeze() {
   for (( i=0; i<${#DEPS[@]} ; i+=2 ));
   do
     local tar="${DEPS[i+1]}"
@@ -50,18 +81,9 @@ unpack_tars() {
   done
 }
 
-dump_cache() {
-  if [ $DEBUG -eq 1 ]
-  then
-    echo "DUMPING CACHE $1 START" >&2
-    ls -l "$2" >&2
-    echo "DUMPING CACHE $1 STOP" >&2
-  fi
-}
-
 mkdir -p "$XDG_CACHE_HOME/dhall"
 
-unpack_tars
+unpack_tars_freeze
 
 dump_cache "BEFORE_GEN" "$XDG_CACHE_HOME/dhall"
 
