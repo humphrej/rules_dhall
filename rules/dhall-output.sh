@@ -2,6 +2,13 @@
 #
 # Script that creates an output from a dhall file and a set of dependencies
 #
+function debug_log() {
+ if [ $DEBUG -eq 1 ]
+ then
+    echo "$(basename "$0") DEBUG: $1" >&2
+  fi
+}
+
 DEBUG=0
 
 TARS=""
@@ -33,17 +40,15 @@ OUTPUT_FILE=$2
 DHALL_FILE=$3
 export XDG_CACHE_HOME="$PWD/.cache"
 
-if [ $DEBUG -eq 1 ]; then
-  echo "Working directory: ${PWD}"
-  echo "Cache: ${XDG_CACHE_HOME}"
-  echo "Dhall output binary: ${DHALL_TO_YAML_BIN}"
-  echo "Package deps: ${TARS}"
-  echo "Resources: ${RESOURCES}"
-fi
+debug_log "Working directory: ${PWD}"
+debug_log "Cache: ${XDG_CACHE_HOME}"
+debug_log "Dhall output binary: ${DHALL_TO_YAML_BIN}"
+debug_log "Package deps: ${TARS}"
+debug_log "Resources: ${RESOURCES}"
 
 unpack_tars() {
   for tar in $*; do
-    [ $DEBUG -eq 1 ] && echo "Unpacking $tar into $XDG_CACHE_HOME"
+    debug_log "Unpacking $tar into $XDG_CACHE_HOME"
     tar -xf "$tar" --strip-components=2 -C "$XDG_CACHE_HOME/dhall" .cache
   done
 }
@@ -52,16 +57,17 @@ copy_resources() {
     source=$(cut -d':' -f 1 <<< "${resource}")
     target=$(cut -d':' -f 2 <<< "${resource}")
 
-    [ $DEBUG -eq 1 ] && echo "Copying $source to $target"
+    debug_log "Copying $source to $target"
     cp -f "$source" "$target"
   done
 }
 
 dump_cache() {
-  if [ $DEBUG -eq 1 ]; then
-    echo "DUMPING CACHE $1 START"
-    ls -l "$2"
-    echo "DUMPING CACHE $1 STOP"
+  if [ $DEBUG -eq 1 ]
+  then
+    echo "DUMPING CACHE $1 START" >&2
+    ls -l "$2" >&2
+    echo "DUMPING CACHE $1 STOP" >&2
   fi
 }
 
@@ -71,9 +77,9 @@ unpack_tars "$TARS"
 
 copy_resources "$RESOURCES"
 
-dump_cache BEFORE_GEN "$XDG_CACHE_HOME/dhall"
+dump_cache "BEFORE_GEN" "$XDG_CACHE_HOME/dhall"
 
-[ $DEBUG -eq 1 ] && echo "Generating $OUTPUT_FILE"
+debug_log "Generating $OUTPUT_FILE"
 # We want the _DHALL_ARGS to expand
 # shellcheck disable=SC2086
 if ! $DHALL_TO_YAML_BIN ${_DHALL_ARGS} --file "$DHALL_FILE" > "$OUTPUT_FILE"

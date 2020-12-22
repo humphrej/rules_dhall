@@ -22,6 +22,13 @@ function _realpath() {
   return 0
 }
 
+function debug_log() {
+ if [ $DEBUG -eq 1 ]
+ then
+    echo "$(basename "$0") DEBUG: $1" >&2
+  fi
+}
+
 DEBUG=0
 
 TARS=""
@@ -58,24 +65,22 @@ fi
 
 export XDG_CACHE_HOME="$PWD/.cache"
 
-if [ $DEBUG -eq 1 ]; then
-  echo "Working directory: ${PWD}"
-  echo "Cache: ${XDG_CACHE_HOME}"
-  echo "Dhall binary: ${DHALL_BIN}"
-  echo "Package deps: ${TARS}"
-  echo "Resources: ${RESOURCES}"
-fi
+debug_log "Working directory: ${PWD}"
+debug_log "Cache: ${XDG_CACHE_HOME}"
+debug_log "Dhall binary: ${DHALL_BIN}"
+debug_log "Package deps: ${TARS}"
+debug_log "Resources: ${RESOURCES}"
 
 unpack_tarfile() {
   DEP_TARFILE=$1
   DEST_DIR=$2
-  [ $DEBUG -eq 1 ] && "echo ${TARFILE} Unpacking $DEP_TARFILE into $DEST_DIR"
+  debug_log "${TARFILE} Unpacking $DEP_TARFILE into $DEST_DIR"
   tar -xf "$DEP_TARFILE" -C "$DEST_DIR"
 }
 
 unpack_tars() {
   for tar in $*; do
-    [ $DEBUG -eq 1 ] && echo "Unpacking $tar into $XDG_CACHE_HOME"
+    debug_log "Unpacking $tar into $XDG_CACHE_HOME"
     tar -xf "$tar" --strip-components=2 -C "$XDG_CACHE_HOME/dhall" .cache
   done
 }
@@ -84,16 +89,17 @@ copy_resources() {
     source=$(cut -d':' -f 1 <<< "${resource}")
     target=$(cut -d':' -f 2 <<< "${resource}")
 
-    [ $DEBUG -eq 1 ] && echo "Copying $source to $target"
+    debug_log "Copying $source to $target"
     cp -f "$source" "$target"
   done
 }
 
 dump_cache() {
-  if [ $DEBUG -eq 1 ]; then
-    echo "DUMPING CACHE $1 START "
-    ls -l "$2"
-    echo "DUMPING CACHE $1 STOP"
+  if [ $DEBUG -eq 1 ]
+  then
+    echo "DUMPING CACHE $1 START" >&2
+    ls -l "$2" >&2
+    echo "DUMPING CACHE $1 STOP" >&2
   fi
 }
 
@@ -105,7 +111,7 @@ copy_resources "$RESOURCES"
 
 dump_cache "BEFORE_GEN" "$XDG_CACHE_HOME/dhall"
 
-[ $DEBUG -eq 1 ] && echo "Generating source.dhall"
+debug_log "Generating source.dhall"
 if ! ${DHALL_BIN} --alpha --file "${DHALL_FILE}" > source.dhall
 then
   exit $?
@@ -115,7 +121,7 @@ SHA_HASH=$(${DHALL_BIN} hash --file source.dhall)
 
 HASH_FILE="${SHA_HASH/sha256:/1220}"
 
-[ $DEBUG -eq 1 ] && echo "Hash is $HASH_FILE"
+debug_log "Hash is $HASH_FILE"
 if ! ${DHALL_BIN} encode --file source.dhall > "$XDG_CACHE_HOME/dhall/$HASH_FILE"
 then
   exit $?
@@ -123,11 +129,11 @@ fi
 
 dump_cache "AFTER_GEN" "$XDG_CACHE_HOME/dhall"
 
-[ $DEBUG -eq 1 ] && echo "Creating tarfile $TARFILE"
+debug_log "Creating tarfile $TARFILE"
 tar -cf "$TARFILE" -C "$PWD" ".cache/dhall/$HASH_FILE"
 tar -rf "$TARFILE" source.dhall
 echo "missing $HASH_FILE" > binary.dhall
 tar -rf "$TARFILE" binary.dhall
 
-[ $DEBUG -eq 1 ] && echo "Removing source.dhall"
+debug_log "Removing source.dhall"
 rm source.dhall

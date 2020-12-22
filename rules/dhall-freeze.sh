@@ -5,6 +5,13 @@
 
 set -euo pipefail
 
+function debug_log() {
+ if [ $DEBUG -eq 1 ]
+ then
+    echo "$(basename "$0") DEBUG: $1" >&2
+  fi
+}
+
 FAST=@@FAST@@
 DEBUG=@@DEBUG@@
 DHALL_BIN=$(realpath -s @@DHALL_BIN@@)
@@ -14,17 +21,15 @@ export XDG_CACHE_HOME="$PWD/.cache"
 
 IMPORTHASH=()
 
-if [ $DEBUG -eq 1 ]; then
-  echo "Working directory: ${PWD}"
-  echo "Cache: ${XDG_CACHE_HOME}"
-  echo "Dhall binary: ${DHALL_BIN}"
-  echo "Package deps: ${DEPS[*]}"
-fi
+debug_log "Working directory: ${PWD}"
+debug_log "Cache: ${XDG_CACHE_HOME}"
+debug_log "Dhall binary: ${DHALL_BIN}"
+debug_log "Package deps: ${DEPS[*]}"
 
 unpack_tarfile() {
   DEP_TARFILE=$1
   DEST_DIR=$2
-  [ $DEBUG -eq 1 ] && echo "${TARFILE} Unpacking $DEP_TARFILE into $DEST_DIR"
+  debug_log "${TARFILE} Unpacking $DEP_TARFILE into $DEST_DIR"
   tar -xf "$DEP_TARFILE" -C "$DEST_DIR"
 }
 
@@ -33,7 +38,8 @@ unpack_tars() {
   do
     local tar="${DEPS[i+1]}"
     local name="${DEPS[i]}"
-    [ $DEBUG -eq 1 ] && echo "Unpacking $tar into $XDG_CACHE_HOME" && tar -tvf $tar
+    debug_log "Unpacking $tar into $XDG_CACHE_HOME"
+    debug_log "$(tar -tvf $tar)"
     tar -xf $tar --strip-components=2 -C "$XDG_CACHE_HOME/dhall" .cache
     tar -xOf $tar source.dhall > $name
     local hash
@@ -45,10 +51,11 @@ unpack_tars() {
 }
 
 dump_cache() {
-  if [ $DEBUG -eq 1 ]; then
-    echo "DUMPING CACHE $1 START "
-    ls -l "$2"
-    echo "DUMPING CACHE $1 STOP"
+  if [ $DEBUG -eq 1 ]
+  then
+    echo "DUMPING CACHE $1 START" >&2
+    ls -l "$2" >&2
+    echo "DUMPING CACHE $1 STOP" >&2
   fi
 }
 
@@ -56,7 +63,7 @@ mkdir -p "$XDG_CACHE_HOME/dhall"
 
 unpack_tars
 
-dump_cache BEFORE_GEN "$XDG_CACHE_HOME/dhall"
+dump_cache "BEFORE_GEN" "$XDG_CACHE_HOME/dhall"
 
 cd "$(dirname ${ENTRYPOINT})"
 filename=$(basename ${ENTRYPOINT})
@@ -67,16 +74,16 @@ if [ $FAST -eq 1 ]; then
   do
     name="${IMPORTHASH[i]}"
     ihash="${IMPORTHASH[i+1]}"
-    [ $DEBUG -eq 1 ] && echo "Use $ihash for $name"
+    debug_log "Use $ihash for $name"
     input=$(perl -0777 -pe "s/(env:DHALLBAZEL_$name)\s+sha256:\w+/\1 sha256:$ihash /gmu" <<< "${input}" | perl -0777 -pe "s/(env:DHALLBAZEL_$name)(?:\s+|\z)(?!sha256:)/\1 sha256:$ihash /gmu")
   done
 
   input=$(${DHALL_BIN} format <<< "${input}")
 
-  [ $DEBUG -eq 1 ] && echo "Freeze Check: ${DHALL_BIN} freeze --check"
+  debug_log "Freeze Check: ${DHALL_BIN} freeze --check"
   "${DHALL_BIN}" freeze --check <<< "${input}"
 else
-  [ $DEBUG -eq 1 ] && echo "Freezing: ${DHALL_BIN} freeze --all"
+  debug_log "Freezing: ${DHALL_BIN} freeze --all"
   "${DHALL_BIN}" freeze --all <<< "${input}"
 fi
 

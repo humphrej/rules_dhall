@@ -24,20 +24,37 @@ function _realpath() {
   return 0
 }
 
+function debug_log() {
+ if [ $DEBUG -eq 1 ]
+ then
+    echo "$(basename "$0") DEBUG: $1" >&2
+  fi
+}
+
 DEBUG=0
+
+while getopts "v:" arg; do
+  # We handle the rest of the arguments below
+  # shellcheck disable=SC2220
+  case "$arg" in
+    v)
+      DEBUG=1
+      ;;
+  esac
+done
+shift $((OPTIND - 1))
+
 DHALL_DOCS_BIN=$(_realpath "$1")
 INPUT=$(_realpath "$2")
 OUTPUT=$(_realpath "$3")
 export XDG_CACHE_HOME="$PWD/.cache"
 export HOME="$PWD"
 
-if [ $DEBUG -eq 1 ]; then
-  echo "Working directory: ${PWD}"
-  echo "Cache: ${XDG_CACHE_HOME}"
-  echo "Dhall binary: ${DHALL_DOCS_BIN}"
-  echo "Input Dir: ${INPUT}"
-  echo "Output file: ${OUTPUT}"
-fi
+debug_log "Working directory: ${PWD}"
+debug_log "Cache: ${XDG_CACHE_HOME}"
+debug_log "Dhall binary: ${DHALL_DOCS_BIN}"
+debug_log "Input Dir: ${INPUT}"
+debug_log "Output file: ${OUTPUT}"
 
 TMPDIR=$(mktemp -d)
 trap 'rm -rf "$TMPDIR"' EXIT
