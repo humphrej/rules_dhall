@@ -3,15 +3,15 @@
 def _dhall_output_impl(ctx):
   entrypoint = ctx.attr.entrypoint.files.to_list()[0]
 
-  outputFile = entrypoint.basename[0:-6] + "." + ctx.attr._format
+  output_file = entrypoint.basename[0:-6] + "." + ctx.attr._format
   
   inputs = []
   inputs.append(entrypoint)
 
   if ctx.attr.out != "":
-    outputFile = ctx.attr.out
+    output_file = ctx.attr.out
 
-  output = ctx.actions.declare_file(outputFile)
+  output = ctx.actions.declare_file(output_file)
 
   # Build command
   cmd = []

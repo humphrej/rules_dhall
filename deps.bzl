@@ -1,7 +1,8 @@
+"""Download all remote dependencies"""
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
 
 def load_dhall_dependencies():
+    """Get all required dependencies for dhall builds"""
     http_archive(
         name = "dhall_bin",
         sha256 = "9fc42f2f537bf62fd5e3afc959ec176936be448afe1ed3d3121c0d3a45b730b2",
@@ -67,6 +68,7 @@ def load_dhall_dependencies():
     )
 
 def load_dhall_k8s_dependencies():
+    """Get the dhall kubernetes package"""
     http_archive(
         name = "dhall-kubernetes",
         sha256 = "370516b4e3424bb0a683f9e8e0a9fc5a058ae89568f2712b97ae07f3095d4e0d",

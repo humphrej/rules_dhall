@@ -1,3 +1,4 @@
+"""Define our macros for managing dhall builds"""
 load("//rules:dhall_library.bzl", _dhall_library = "dhall_library", _dhall_library_docs = "dhall_library_docs")
 load("//rules:dhall_freeze.bzl", _dhall_freeze = "dhall_freeze")
 load("//rules:dhall_output.bzl", _dhall_json = "dhall_json", _dhall_yaml = "dhall_yaml")
@@ -14,14 +15,12 @@ def dhall_macro(name, **kwargs):
     dhall_yaml(name = name + "_yaml", **kwargs)
 
 def dhall_library_macro(name, **kwargs):
-    """Create dhall_library build with dhall_freeze run target
-    """
+    """Create dhall_library build with dhall_freeze run target"""
     dhall_library(name = name, **kwargs)
     dhall_freeze(name = name + "_freeze", **kwargs)
 
 def dhall_prelude(name, visibility = None, **kwargs):
-    """Create prelude library
-    """
+    """Create prelude library"""
     dhall_library(
         name = name,
         entrypoint = "@dhall-prelude//:Prelude/package.dhall",
@@ -40,8 +39,7 @@ def dhall_prelude(name, visibility = None, **kwargs):
     )
 
 def dhall_k8s(name, version, visibility = None, **kwargs):
-    """Create k8s package library for version
-    """
+    """Create k8s package library for version"""
     dhall_library(
         name = name,
         entrypoint = "@dhall-kubernetes//:%s/package.dhall" % version,

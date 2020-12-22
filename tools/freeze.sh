@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-if [[ $# != 1 ]]; then
+if [[ $# -ne 1 ]]; then
   echo >&2 "Usage: $0 target"
   echo >&2 "e.g. $0 //some:target_freeze"
   exit 1

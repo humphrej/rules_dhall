@@ -6,8 +6,8 @@ def _is_safe_name(name):
       return False
   return True
 
-"""A rule that processes dhall files and creates a tarfile of binary encodings"""
 def _dhall_library_impl(ctx):
+  """A rule that processes dhall files and creates a tarfile of binary encodings"""
   entrypoint = ctx.attr.entrypoint.files.to_list()[0]
   if not _is_safe_name(ctx.attr.name):
     fail(attr="name", msg="Must use bash variable name safe values")

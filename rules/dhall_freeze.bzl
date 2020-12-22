@@ -1,7 +1,8 @@
+"""A rule that outputs frozen dhall"""
 load("@bazel_skylib//lib:shell.bzl", "shell")
 
-"""A rule that outputs frozen dhall"""
 def _dhall_freeze_impl(ctx):
+  """A rule that outputs frozen dhall"""
   entrypoint = ctx.attr.entrypoint.files.to_list()[0]
 
   substitutions = {
