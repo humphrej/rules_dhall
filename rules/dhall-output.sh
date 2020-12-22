@@ -47,13 +47,18 @@ debug_log "Package deps: ${TARS}"
 debug_log "Resources: ${RESOURCES}"
 
 unpack_tars() {
-  for tar in $*; do
-    debug_log "Unpacking $tar into $XDG_CACHE_HOME"
-    tar -xf "$tar" --strip-components=2 -C "$XDG_CACHE_HOME/dhall" .cache
+  # $TARS is formated as a space-separated list of names and paths like
+  # k8s generators/k8s_tar prelude generators/prelude_tar
+  for arg in "$@"
+  do
+    debug_log "Unpacking $arg into $XDG_CACHE_HOME"
+    debug_log "$(tar -tvf "$arg")"
+    tar -xf "$arg" --strip-components=2 -C "$XDG_CACHE_HOME/dhall" .cache
   done
 }
+
 copy_resources() {
-  for resource in $*; do
+  for resource in "$@"; do
     source=$(cut -d':' -f 1 <<< "${resource}")
     target=$(cut -d':' -f 2 <<< "${resource}")
 
@@ -73,9 +78,13 @@ dump_cache() {
 
 mkdir -p "$XDG_CACHE_HOME/dhall"
 
-unpack_tars "$TARS"
+# We want the variable to expand into multiple args
+# shellcheck disable=SC2086
+unpack_tars $TARS
 
-copy_resources "$RESOURCES"
+# We want the variable to expand into multiple args
+# shellcheck disable=SC2086
+copy_resources $RESOURCES
 
 dump_cache "BEFORE_GEN" "$XDG_CACHE_HOME/dhall"
 
