@@ -1,5 +1,5 @@
 let kubernetes =
-      env:DHALLBAZEL_k8s_package sha256:ef3845f617b91eaea1b7abb5bd62aeebffd04bcc592d82b7bd6b39dda5e5d545
+      env:DHALLBAZEL_k8s sha256:ef3845f617b91eaea1b7abb5bd62aeebffd04bcc592d82b7bd6b39dda5e5d545
 
 let _configMap1 =
       kubernetes.ConfigMap::{

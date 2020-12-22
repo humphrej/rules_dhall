@@ -81,3 +81,14 @@ To find the hash for a given package/tar:
 ```shell script
 $ bazel run //rules:dhall-hash -- <path to tarfile>
 ```
+
+## Note on network
+rules_dhall allows preventing dhall from accessing internet resources via the
+`block-network` tag. This aides in ensuring dhall uses the bazel dependencies.
+Note that this requires the experimental flag
+`--experimental_allow_tags_propagation` which is set in the `.bazelrc` adjacent
+to the workspace. See [bazel issue
+8830](https://github.com/bazelbuild/bazel/issues/8830) for more detail on the
+experimental flag and [bazels documentation on
+tags](https://docs.bazel.build/versions/master/be/common-definitions.html#common-attributes)
+for information about `block-network`.
