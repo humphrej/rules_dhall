@@ -2,6 +2,20 @@
 #
 # Script that creates a tarfile of the encoded input plus all dependencies
 #
+# https://stackoverflow.com/a/18443300
+function _realpath() {
+  local OURPWD=$PWD
+  cd "$(dirname "$1")"
+  local LINK=$(readlink "$(basename "$1")")
+  while [ "$LINK" ]; do
+    cd "$(dirname "$LINK")"
+    LINK=$(readlink "$(basename "$1")")
+  done
+  local REALPATH="$PWD/$(basename "$1")"
+  cd "$OURPWD"
+  echo "$REALPATH"
+}
+
 DEBUG=0
 
 TARS=""
@@ -28,7 +42,7 @@ fi
 
 DHALL_BIN=$1
 TARFILE=$2
-DHALL_FILE=$3
+DHALL_FILE=$(_realpath "$3")
 export XDG_CACHE_HOME="$PWD/.cache"
 
 if [ $DEBUG -eq 1 ]; then
