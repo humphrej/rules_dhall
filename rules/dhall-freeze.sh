@@ -72,10 +72,11 @@ unpack_tars_freeze() {
     debug_log "Unpacking $tar into $XDG_CACHE_HOME"
     debug_log "$(tar -tvf $tar)"
     tar -xf $tar --strip-components=2 -C "$XDG_CACHE_HOME/dhall" .cache
-    tar -xOf $tar source.dhall > $name
+    local source=$unpack_dir/$name
+    tar -xOf $tar source.dhall > $source
     local hash
     hash=$(tar -xOf $tar binary.dhall | grep -o '1220\w*' | sed s/^1220//)
-    export "DHALLBAZEL_$name=$PWD/$name"
+    export "DHALLBAZEL_$name=$source"
     IMPORTHASH+=("$name")
     IMPORTHASH+=("$hash")
   done
@@ -83,6 +84,8 @@ unpack_tars_freeze() {
 
 mkdir -p "$XDG_CACHE_HOME/dhall"
 
+unpack_dir=$(mktemp -d)
+trap "rm -rf $unpack_dir" EXIT
 unpack_tars_freeze
 
 dump_cache "BEFORE_GEN" "$XDG_CACHE_HOME/dhall"
